@@ -8,8 +8,10 @@
       "name": "req",
       "methods": [
         "get",
-        "post"
-      ]
+        "post",
+        "delete"
+      ],
+      "route": "{*route}"
     },
     {
       "type": "http",

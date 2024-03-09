@@ -3,3 +3,10 @@
 # Manually managing azure-functions-worker may cause unexpected issues
 
 azure-functions
+Flask-migrate
+fastapi
+passlib[bcrypt]
+pyodbc
+python-jose
+python-multipart
+sqlalchemy
