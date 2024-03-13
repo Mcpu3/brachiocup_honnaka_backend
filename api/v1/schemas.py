@@ -1,7 +1,8 @@
 from pydantic import BaseModel
 
-class Helloworld(BaseModel):
+
+class HelloWorld(BaseModel):
     name: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
