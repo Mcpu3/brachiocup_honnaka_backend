@@ -13,3 +13,16 @@ class HelloWorld(Base):
     name = Column(Unicode, nullable=False)
     created_at = Column(DateTime, nullable=False, default=datetime.now)
     updated_at = Column(DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
+
+class Group(Base):
+    __tablename__ = "Groups"
+
+    group_uuid = Column(String(48), primary_key=True, default=uuid.uuid4)
+
+    groupname = Column(String(48), unique=True, nullable=False)
+    hashed_password = Column(Unicode, nullable=False)
+    display_name = Column(Unicode, nullable=False)
+
+    created_at = Column(DateTime, nullable=False, default=datetime.now)
+    updated_at = Column(DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
+    
