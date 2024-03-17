@@ -37,3 +37,15 @@ class Group(database.Model):
 
     created_at = database.Column(database.DateTime, nullable=False, default=datetime.now)
     updated_at = database.Column(database.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
+
+class User(database.Model):
+    __tablename__ ="Users"
+
+    user_uuid = database.Column(database.String(48), primary_key=True, default=uuid.uuid4)
+
+    username = database.Column(database.String(48), unique=True, nullable=False)
+    hashed_password = database.Column(database.Unicode, nullable=False)
+    display_name = database.Column(database.Unicode, nullable=False)
+
+    created_at = database.Column(database.DateTime, nullable=False, default=datetime.now)
+    updated_at = database.Column(database.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)

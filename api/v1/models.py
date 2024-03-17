@@ -26,3 +26,14 @@ class Group(Base):
     created_at = Column(DateTime, nullable=False, default=datetime.now)
     updated_at = Column(DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
     
+class User(Base):
+    __tablename__ ="Users"
+
+    user_uuid = Column(String(48), primary_key=True, default=uuid.uuid4)
+
+    username = Column(String(48), unique=True, nullable=False)
+    hashed_password = Column(Unicode, nullable=False)
+    display_name = Column(Unicode, nullable=False)
+
+    created_at = Column(DateTime, nullable=False, default=datetime.now)
+    updated_at = Column(DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
