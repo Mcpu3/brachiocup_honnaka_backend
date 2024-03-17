@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.v1 import models
-from api.v1.controllers import hello_world, groups, users
+from api.v1.controllers import users, groups
 from api.v1.database import engine
 
 
@@ -15,7 +15,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"]
 )
-app.include_router(hello_world.api_router, prefix="/api/v1")
 app.include_router(groups.api_router, prefix="/api/v1")
 app.include_router(users.api_router, prefix="/api/v1")
 

@@ -1,4 +1,5 @@
 from typing import Optional
+
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
@@ -12,7 +13,7 @@ def create_group(database: Session, user: models.User, new_group: schemas.groups
     hashed_password = CryptContext(["bcrypt"]).hash(new_group.password)
     group = models.Group(
         groupname = new_group.groupname,
-        hashed_password = hashed_password, 
+        hashed_password = hashed_password,
         display_name = new_group.display_name
     )
 
