@@ -89,7 +89,6 @@ class Item(Base):
     barcode = Column(Unicode, nullable=False)
     cost_price = Column(Integer, nullable=False)
     selling_price = Column(Integer, nullable=False)
-    item_thumbnail_uuid = Column(String(48), ForeignKey("ItemThumbnails.uuid"), nullable=False)
     created_at = Column(DateTime, nullable=False, default=datetime.now)
     updated_at = Column(DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
 
