@@ -38,6 +38,19 @@ class Group(database.Model):
     created_at = database.Column(database.DateTime, nullable=False, default=datetime.now)
     updated_at = database.Column(database.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
 
+class GroupUsers(database.Model):
+    __tablename__ = "GroupUsers"
+
+    group_uuid = database.Column(database.String(48), database.ForeignKey("Groups.group_uuid"), primary_key = True)
+    user_uuid = database.Column(database.String(48), database.ForeignKey("Users.user_uuid"), primary_key = True)
+
+class GroupAdministrators(database.Model):
+    __tablename__ = "GroupAdministrators"
+
+    group_uuid = database.Column(database.String(48), database.ForeignKey("Groups.group_uuid"), primary_key = True)
+    user_uuid = database.Column(database.String(48), database.ForeignKey("Users.user_uuid"), primary_key = True)
+
+
 class User(database.Model):
     __tablename__ ="Users"
 
