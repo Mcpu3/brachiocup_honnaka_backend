@@ -4,8 +4,8 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
-from api.v1.dependencies import get_database
-from api.v1 import cruds, schemas
+from api.v1.dependencies import get_database, get_current_user
+from api.v1 import cruds, models, schemas
 
 
 api_router = APIRouter(prefix="/groups", tags=["Groups"])
@@ -19,8 +19,8 @@ def get_group(group_uuid: str, database: Session=Depends(get_database)) -> schem
     return group
 
 @api_router.post("/new")
-def post_group(request: schemas.groups.NewGroup, _request: Request, database: Session=Depends(get_database)):
-    group = cruds.groups.create_group(database, request)
+def post_group(request: schemas.groups.NewGroup, _request: Request, current_user: models.User=Depends(get_current_user), database: Session=Depends(get_database)):
+    group = cruds.groups.create_group(database, current_user, request)
     if not group:
         raise HTTPException(status.HTTP_400_BAD_REQUEST)
     response = {

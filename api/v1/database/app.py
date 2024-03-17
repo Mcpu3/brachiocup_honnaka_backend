@@ -35,21 +35,23 @@ class Group(database.Model):
     hashed_password = database.Column(database.Unicode, nullable=False)
     display_name = database.Column(database.Unicode, nullable=False)
 
+    members = database.relationship("User", secondary="GroupUsers", back_populates="groups")
+    administrators = database.relationship("User", secondary="GroupAdministrators", back_populates="administrated_groups")
+
     created_at = database.Column(database.DateTime, nullable=False, default=datetime.now)
     updated_at = database.Column(database.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
 
-class GroupUsers(database.Model):
+class GroupUser(database.Model):
     __tablename__ = "GroupUsers"
 
     group_uuid = database.Column(database.String(48), database.ForeignKey("Groups.group_uuid"), primary_key = True)
     user_uuid = database.Column(database.String(48), database.ForeignKey("Users.user_uuid"), primary_key = True)
 
-class GroupAdministrators(database.Model):
+class GroupAdministrator(database.Model):
     __tablename__ = "GroupAdministrators"
 
     group_uuid = database.Column(database.String(48), database.ForeignKey("Groups.group_uuid"), primary_key = True)
     user_uuid = database.Column(database.String(48), database.ForeignKey("Users.user_uuid"), primary_key = True)
-
 
 class User(database.Model):
     __tablename__ ="Users"
@@ -59,6 +61,9 @@ class User(database.Model):
     username = database.Column(database.String(48), unique=True, nullable=False)
     hashed_password = database.Column(database.Unicode, nullable=False)
     display_name = database.Column(database.Unicode, nullable=False)
+
+    groups = database.relationship("Group", secondary="GroupUsers", back_populates="members")
+    administrated_groups = database.relationship("Group", secondary="GroupAdministrators", back_populates="administrators")
 
     created_at = database.Column(database.DateTime, nullable=False, default=datetime.now)
     updated_at = database.Column(database.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
