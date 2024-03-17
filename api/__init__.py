@@ -3,9 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.v1 import models
-from api.v1.controllers import hello_world
-from api.v1.controllers import groups
-from api.v1.controllers import users
+from api.v1.controllers import hello_world, groups, users
 from api.v1.database import engine
 
 
