@@ -12,7 +12,7 @@ on:
 
 env:
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' # set this to the path to your web app project, defaults to the repository root
-  PYTHON_VERSION: '3.8' # set this to the python version to use (supports 3.6, 3.7, 3.8)
+  PYTHON_VERSION: '3.11' # set this to the python version to use (supports 3.6, 3.7, 3.8)
 
 jobs:
   build:
@@ -53,8 +53,6 @@ jobs:
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-function.outputs.webapp-url }}
-    permissions:
-      id-token: write #This is required for requesting the JWT
 
     steps:
       - name: Download artifact from build job
@@ -63,14 +61,7 @@ jobs:
           name: python-app
 
       - name: Unzip artifact for deployment
-        run: unzip release.zip     
-        
-      - name: Login to Azure
-        uses: azure/login@v1
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_245BBB34EDA749F28AB4C01E927BBB4A }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_6E8B75BD2A9545D39ADB1B0833A445B0 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_8379E0403B9A448FAF881CCDA061F724 }}
+        run: unzip release.zip
 
       - name: 'Deploy to Azure Functions'
         uses: Azure/functions-action@v1
@@ -79,6 +70,6 @@ jobs:
           app-name: 'brachiocup-honnaka-backend'
           slot-name: 'Production'
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_02E49698F1B140C2991254EEFF022B33 }}
           scm-do-build-during-deployment: true
           enable-oryx-build: true
-          
