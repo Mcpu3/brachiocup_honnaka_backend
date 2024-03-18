@@ -12,7 +12,7 @@ def read_item_thumbnails(database: Session, item_uuid: str) -> List[models.ItemT
 def read_item_thumbnail(database: Session, item_uuid: str, item_thumbnail_uuid: str) -> Optional[models.ItemThumbnail]:
     return database.query(models.ItemThumbnail).filter(and_(models.ItemThumbnail.item_uuid == item_uuid, models.ItemTHumbnail.uuid == item_thumbnail_uuid)).first()
 
-def create_item_thumbnail(database: Session, item_uuid: str, new_item_thumbnail: schemas.item_thumbnails.new_item_thumbnails) -> Optional[models.ItemThumbnail]:
+def create_item_thumbnail(database: Session, item_uuid: str, new_item_thumbnail: schemas.item_thumbnails.NewItemThumbnail) -> Optional[models.ItemThumbnail]:
     item_thumbnail = models.ItemThumbnail(
         item_uuid=item_uuid,
         base64=new_item_thumbnail.base64

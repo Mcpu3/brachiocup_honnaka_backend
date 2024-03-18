@@ -98,8 +98,8 @@ class Item(Base):
 
     group = relationship("Group", back_populates="items")
     item_group = relationship("ItemGroup", back_populates="items")
-    item_thumbnail = relationship("ItemThumbnail", back_populates="item")
     item_expiration_dates = relationship("ItemExpirationDate", back_populates="item")
+    item_thumbnail = relationship("ItemThumbnail", back_populates="item", uselist=False)
 
 
 class ItemExpirationDate(Base):

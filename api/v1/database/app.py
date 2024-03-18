@@ -109,8 +109,8 @@ class Item(database.Model):
 
     group = database.relationship("Group", back_populates="items")
     item_group = database.relationship("ItemGroup", back_populates="items")
-    item_thumbnail = database.relationship("ItemThumbnail", back_populates="item")
     item_expiration_dates = database.relationship("ItemExpirationDate", back_populates="item")
+    item_thumbnail = database.relationship("ItemThumbnail", back_populates="item", uselist=False)
 
 
 class ItemExpirationDate(database.Model):
