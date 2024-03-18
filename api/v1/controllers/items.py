@@ -21,6 +21,34 @@ def get_items(group_uuid: str, current_user: models.User=Depends(get_current_use
 
     return items
 
+@api_router.get("/recommended", response_model=List[schemas.items.Item])
+def get_recommended_items(group_uuid: str, size: int=10, current_user: models.User=Depends(get_current_user), database: Session=Depends(get_database)) -> List[schemas.items.Item]:
+    group = authorize_group(database, group_uuid, current_user)
+
+    item_purchasing_histories = cruds.item_purchasing_histories.read_item_purchasing_histories(database, current_user.uuid, group.uuid)
+    if not item_purchasing_histories:
+        raise HTTPException(status.HTTP_204_NO_CONTENT)
+
+    quantities_grouped_by_item = {}
+    for item_purchasing_history in item_purchasing_histories:
+        if item_purchasing_history.item_expiration_date.item.uuid not in quantities_grouped_by_item:
+            quantities_grouped_by_item[item_purchasing_history.item_expiration_date.item.uuid] = item_purchasing_history.quantity
+        else:
+            quantities_grouped_by_item[item_purchasing_history.item_expiration_date.item.uuid] += item_purchasing_history.quantity
+
+    sorted_quantities_grouped_by_item = sorted(quantities_grouped_by_item.items(), key=lambda quantity_grouped_by_item: quantity_grouped_by_item[1])
+
+    recommended_items = []
+    for item_uuid, _ in sorted_quantities_grouped_by_item:
+        recommended_item = cruds.items.read_item(database, item_uuid)
+        if not recommended_item:
+            raise HTTPException(status.HTTP_400_BAD_REQUEST)
+        recommended_items.append(recommended_item)
+
+    recommended_items = recommended_items[:size]
+
+    return recommended_items
+
 @api_router.get("/{item_uuid_or_barcode}", response_model=schemas.items.Item)
 def get_item(group_uuid: str, item_uuid_or_barcode: str, current_user: models.User=Depends(get_current_user), database: Session=Depends(get_database)):
     group = authorize_group(database, group_uuid, current_user)
