@@ -6,8 +6,8 @@ from sqlalchemy.orm import Session
 from api.v1 import models, schemas
 
 
-def read_groups(database: Session, member: models.User) -> List[models.Group]:
-    return database.query(models.Group).filter(models.Group.members.any(uuid=member.uuid)).all()
+def read_groups(database: Session, member_uuid: str) -> List[models.Group]:
+    return database.query(models.Group).filter(models.Group.members.any(uuid=member_uuid)).all()
 
 def read_group(database: Session, group_uuid: Optional[str]=None, groupname: Optional[str]=None) -> Optional[models.Group]:
     group = None
@@ -27,9 +27,9 @@ def read_group_by_name(database: Session, groupname: str) -> Optional[models.Gro
 def create_group(database: Session, signup: schemas.groups.Signup) -> Optional[models.Group]:
     hashed_password = CryptContext(["bcrypt"]).hash(signup.password)
     group = models.Group(
-        groupname = signup.groupname,
-        hashed_password = hashed_password,
-        display_name = signup.display_name
+        groupname=signup.groupname,
+        hashed_password=hashed_password,
+        display_name=signup.display_name
     )
 
     database.add(group)

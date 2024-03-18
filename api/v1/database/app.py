@@ -70,6 +70,7 @@ class Balance(database.Model):
     uuid = database.Column(database.String(48), primary_key=True, default=uuid.uuid4)
     user_uuid = database.Column(database.String(48), database.ForeignKey("Users.uuid"), nullable=False)
     group_uuid = database.Column(database.String(48), database.ForeignKey("Groups.uuid"), nullable=False)
+    balance = database.Column(database.Integer, nullable=False)
     created_at = database.Column(database.DateTime, nullable=False, default=datetime.now)
     updated_at = database.Column(database.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
 
