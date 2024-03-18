@@ -1,12 +1,13 @@
 import os
 
-from api.v1.database import LocalSession
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from sqlalchemy.orm import Session
 from jose import JWTError, jwt
+from sqlalchemy.orm import Session
 
 from api.v1 import cruds, models
+from api.v1.database import LocalSession
+
 
 def get_database():
     database = LocalSession()
@@ -26,5 +27,17 @@ def get_current_user(access_token: str=Depends(OAuth2PasswordBearer("/api/v1/sig
     user = cruds.users.read_user(database, username=username)
     if not user:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED)
-    
+
     return user
+
+def authorize_group(database: Session, group_uuid: str, user: models.User, only_administrator: bool=False):
+    group = cruds.groups.read_group(database, group_uuid)
+    if not group:
+        raise HTTPException(status.HTTP_404_NOT_FOUND)
+    if user not in group.members:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED)
+    if only_administrator:
+        if user not in group.administrators:
+            raise HTTPException(status.HTTP_401_UNAUTHORIZED)
+
+    return group

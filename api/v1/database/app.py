@@ -18,47 +18,131 @@ database = SQLAlchemy(app)
 migrate = Migrate(app, database)
 
 
-class HelloWorld(database.Model):
-    __tablename__ = "HelloWorld"
+class User(database.Model):
+    __tablename__ ="Users"
 
     uuid = database.Column(database.String(48), primary_key=True, default=uuid.uuid4)
-    name = database.Column(database.Unicode, nullable=False)
+    username = database.Column(database.String(48), unique=True, nullable=False)
+    hashed_password = database.Column(database.Unicode, nullable=False)
+    display_name = database.Column(database.Unicode, nullable=False)
     created_at = database.Column(database.DateTime, nullable=False, default=datetime.now)
     updated_at = database.Column(database.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
+
+    groups = database.relationship("Group", secondary="GroupMembers", back_populates="members")
+    administrated_groups = database.relationship("Group", secondary="GroupAdministrators", back_populates="administrators")
+    balances = database.relationship("Balance", back_populates="user")
+    item_purchasing_histories = database.relationship("ItemPurchasingHistory", back_populates="user")
+
 
 class Group(database.Model):
     __tablename__ = "Groups"
 
-    group_uuid = database.Column(database.String(48), primary_key=True, default=uuid.uuid4)
-
+    uuid = database.Column(database.String(48), primary_key=True, default=uuid.uuid4)
     groupname = database.Column(database.String(48), unique=True, nullable=False)
     hashed_password = database.Column(database.Unicode, nullable=False)
     display_name = database.Column(database.Unicode, nullable=False)
-
     created_at = database.Column(database.DateTime, nullable=False, default=datetime.now)
     updated_at = database.Column(database.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
 
-class GroupUsers(database.Model):
-    __tablename__ = "GroupUsers"
+    members = database.relationship("User", secondary="GroupMembers", back_populates="groups")
+    administrators = database.relationship("User", secondary="GroupAdministrators", back_populates="administrated_groups")
+    balances = database.relationship("Balance", back_populates="group")
+    item_groups = database.relationship("ItemGroup", back_populates="group")
 
-    group_uuid = database.Column(database.String(48), database.ForeignKey("Groups.group_uuid"), primary_key = True)
-    user_uuid = database.Column(database.String(48), database.ForeignKey("Users.user_uuid"), primary_key = True)
 
-class GroupAdministrators(database.Model):
+class GroupMember(database.Model):
+    __tablename__ = "GroupMembers"
+
+    user_uuid = database.Column(database.String(48), database.ForeignKey("Users.uuid"), primary_key=True)
+    group_uuid = database.Column(database.String(48), database.ForeignKey("Groups.uuid"), primary_key=True)
+
+
+class GroupAdministrator(database.Model):
     __tablename__ = "GroupAdministrators"
 
-    group_uuid = database.Column(database.String(48), database.ForeignKey("Groups.group_uuid"), primary_key = True)
-    user_uuid = database.Column(database.String(48), database.ForeignKey("Users.user_uuid"), primary_key = True)
+    user_uuid = database.Column(database.String(48), database.ForeignKey("Users.uuid"), primary_key=True)
+    group_uuid = database.Column(database.String(48), database.ForeignKey("Groups.uuid"), primary_key=True)
 
 
-class User(database.Model):
-    __tablename__ ="Users"
+class Balance(database.Model):
+    __tablename__ = "Balances"
 
-    user_uuid = database.Column(database.String(48), primary_key=True, default=uuid.uuid4)
-
-    username = database.Column(database.String(48), unique=True, nullable=False)
-    hashed_password = database.Column(database.Unicode, nullable=False)
-    display_name = database.Column(database.Unicode, nullable=False)
-
+    uuid = database.Column(database.String(48), primary_key=True, default=uuid.uuid4)
+    user_uuid = database.Column(database.String(48), database.ForeignKey("Users.uuid"), nullable=False)
+    group_uuid = database.Column(database.String(48), database.ForeignKey("Groups.uuid"), nullable=False)
+    balance = database.Column(database.Integer, nullable=False)
     created_at = database.Column(database.DateTime, nullable=False, default=datetime.now)
     updated_at = database.Column(database.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
+
+    user = database.relationship("User", back_populates="balances")
+    group = database.relationship("Group", back_populates="balances")
+
+
+class ItemGroup(database.Model):
+    __tablename__ = "ItemGroups"
+
+    uuid = database.Column(database.String(48), primary_key=True, default=uuid.uuid4)
+    group_uuid = database.Column(database.String(48), database.ForeignKey("Groups.uuid"), nullable=False)
+    name = database.Column(database.Unicode, nullable=False)
+    color = database.Column(database.Unicode, nullable=False)
+    created_at = database.Column(database.DateTime, nullable=False, default=datetime.now)
+    updated_at = database.Column(database.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
+
+    group = database.relationship("Group", back_populates="item_groups")
+    items = database.relationship("Item", back_populates="item_group")
+
+
+class Item(database.Model):
+    __tablename__ = "Items"
+
+    uuid = database.Column(database.String(48), primary_key=True, default=uuid.uuid4)
+    item_group_uuid = database.Column(database.String(48), database.ForeignKey("ItemGroups.uuid"), nullable=False)
+    name = database.Column(database.Unicode, nullable=False)
+    barcode = database.Column(database.Unicode, nullable=False)
+    cost_price = database.Column(database.Integer, nullable=False)
+    selling_price = database.Column(database.Integer, nullable=False)
+    created_at = database.Column(database.DateTime, nullable=False, default=datetime.now)
+    updated_at = database.Column(database.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
+
+    item_group = database.relationship("ItemGroup", back_populates="items")
+    item_thumbnail = database.relationship("ItemThumbnail", back_populates="item")
+    item_expiration_dates = database.relationship("ItemExpirationDate", back_populates="item")
+
+
+class ItemExpirationDate(database.Model):
+    __tablename__ = "ItemExpirationDates"
+
+    uuid = database.Column(database.String(48), primary_key=True, default=uuid.uuid4)
+    item_uuid = database.Column(database.String(48), database.ForeignKey("Items.uuid"), nullable=False)
+    expiration_date = database.Column(database.DateTime, nullable=False)
+    quantity = database.Column(database.Integer, nullable=False)
+    created_at = database.Column(database.DateTime, nullable=False, default=datetime.now)
+    updated_at = database.Column(database.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
+
+    item = database.relationship("Item", back_populates="item_expiration_dates")
+    item_purchasing_histories = database.relationship("ItemPurchasingHistory", back_populates="item_expiration_date")
+
+
+class ItemThumbnail(database.Model):
+    __tablename__ = "ItemThumbnails"
+
+    uuid = database.Column(database.String(48), primary_key=True, default=uuid.uuid4)
+    item_uuid = database.Column(database.String(48), database.ForeignKey("Items.uuid"), nullable=False)
+    base64 = database.Column(database.Unicode, nullable=False)
+    created_at = database.Column(database.DateTime, nullable=False, default=datetime.now)
+    updated_at = database.Column(database.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
+
+    item = database.relationship("Item", back_populates="item_thumbnail")
+
+
+class ItemPurchasingHistory(database.Model):
+    __tablename__ = "ItemPurchasingHistories"
+
+    uuid = database.Column(database.String(48), primary_key=True, default=uuid.uuid4)
+    user_uuid = database.Column(database.String(48), database.ForeignKey("Users.uuid"), nullable=False)
+    item_expiration_date_uuid = database.Column(database.String(48), database.ForeignKey("ItemExpirationDates.uuid"), nullable=False)
+    created_at = database.Column(database.DateTime, nullable=False, default=datetime.now)
+    updated_at = database.Column(database.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
+
+    user = database.relationship("User", back_populates="item_purchasing_histories")
+    item_expiration_date = database.relationship("ItemExpirationDate", back_populates="item_purchasing_histories")
