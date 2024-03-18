@@ -18,4 +18,4 @@ def top_up_balance(group_uuid: str, request: schemas.balances.TopUpBalance, curr
     if not balance:
         raise HTTPException(status.HTTP_400_BAD_REQUEST)
 
-    return balance
+    return status.HTTP_201_CREATED
