@@ -1,3 +1,4 @@
+from datetime import datetime
 from pydantic import BaseModel
 from typing import List
 
@@ -9,6 +10,8 @@ class ItemGroup(BaseModel):
     name: str
     color: str
     items: List[items_without_item_group.ItemWithoutItemGroup]
+    created_at: datetime
+    updated_at: datetime
 
     class Config:
         from_attributes = True
