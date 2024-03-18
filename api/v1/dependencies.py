@@ -29,3 +29,10 @@ def get_current_user(access_token: str=Depends(OAuth2PasswordBearer("/api/v1/sig
         raise HTTPException(status.HTTP_401_UNAUTHORIZED)
 
     return user
+
+def authorize_group(database: Session, member: models.User, group_uuid: str):
+    group = cruds.groups.read_group(database, group_uuid)
+    if not group:
+        raise HTTPException(status.HTTP_404_NOT_FOUND)
+    if member not in group.members:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED)
