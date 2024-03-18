@@ -29,7 +29,7 @@ def get_groups(current_user: models.User=Depends(get_current_user), database: Se
 
 @api_router.get("/{group_uuid}", response_model=schemas.groups.Group)
 def get_group(group_uuid: str, current_user: models.User=Depends(get_current_user), database: Session=Depends(get_database)) -> schemas.groups.Group:
-    group = cruds.groups.read_group_by_uuid(database, group_uuid=group_uuid)
+    group = cruds.groups.read_group(database, group_uuid=group_uuid)
     if not group:
         raise HTTPException(status.HTTP_404_NOT_FOUND)
     if current_user not in group.members:
