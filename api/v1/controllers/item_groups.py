@@ -25,7 +25,7 @@ def get_item_groups(group_uuid: str, current_user: models.User=Depends(get_curre
 def get_item_group(group_uuid: str, item_group_uuid: str, current_user: models.User=Depends(get_current_user),  database: Session=Depends(get_database)) -> schemas.item_groups.ItemGroup:
     group = authorize_group(database, group_uuid, current_user)
 
-    item_group = cruds.item_groups.read_item_group(database, group.uuid, item_group_uuid)
+    item_group = cruds.item_groups.read_item_group(database, item_group_uuid)
     if not item_group:
         raise HTTPException(status.HTTP_404_NOT_FOUND)
 
