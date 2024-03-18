@@ -37,6 +37,8 @@ class Group(Base):
     administrators = relationship("User", secondary="GroupAdministrators", back_populates="administrated_groups")
     balances = relationship("Balance", back_populates="group")
     item_groups = relationship("ItemGroup", back_populates="group")
+    items = relationship("Item", back_populates="group")
+    item_purchasing_histories = relationship("ItemPurchasingHistory", back_populates="group")
 
 
 class GroupMember(Base):
@@ -85,6 +87,7 @@ class Item(Base):
     __tablename__ = "Items"
 
     uuid = Column(String(48), primary_key=True, default=uuid.uuid4)
+    group_uuid = Column(String(48), ForeignKey("Groups.uuid"), nullable=False)
     item_group_uuid = Column(String(48), ForeignKey("ItemGroups.uuid"), nullable=False)
     name = Column(Unicode, nullable=False)
     barcode = Column(Unicode, nullable=False)
@@ -93,9 +96,10 @@ class Item(Base):
     created_at = Column(DateTime, nullable=False, default=datetime.now)
     updated_at = Column(DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
 
+    group = relationship("Group", back_populates="items")
     item_group = relationship("ItemGroup", back_populates="items")
-    item_thumbnail = relationship("ItemThumbnail", back_populates="item")
     item_expiration_dates = relationship("ItemExpirationDate", back_populates="item")
+    item_thumbnail = relationship("ItemThumbnail", back_populates="item", uselist=False)
 
 
 class ItemExpirationDate(Base):
@@ -129,9 +133,12 @@ class ItemPurchasingHistory(Base):
 
     uuid = Column(String(48), primary_key=True, default=uuid.uuid4)
     user_uuid = Column(String(48), ForeignKey("Users.uuid"), nullable=False)
+    group_uuid = Column(String(48), ForeignKey("Groups.uuid"), nullable=False)
     item_expiration_date_uuid = Column(String(48), ForeignKey("ItemExpirationDates.uuid"), nullable=False)
+    quantity = Column(Integer, nullable=False)
     created_at = Column(DateTime, nullable=False, default=datetime.now)
     updated_at = Column(DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
 
     user = relationship("User", back_populates="item_purchasing_histories")
+    group = relationship("Group", back_populates="item_purchasing_histories")
     item_expiration_date = relationship("ItemExpirationDate", back_populates="item_purchasing_histories")
