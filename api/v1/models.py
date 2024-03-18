@@ -129,6 +129,7 @@ class ItemPurchasingHistory(Base):
 
     uuid = Column(String(48), primary_key=True, default=uuid.uuid4)
     user_uuid = Column(String(48), ForeignKey("Users.uuid"), nullable=False)
+    group_uuid = Column(String(48), ForeignKey("Groups.uuid"), nullable=False)
     item_expiration_date_uuid = Column(String(48), ForeignKey("ItemExpirationDates.uuid"), nullable=False)
     created_at = Column(DateTime, nullable=False, default=datetime.now)
     updated_at = Column(DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
