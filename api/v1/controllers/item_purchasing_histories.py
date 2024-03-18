@@ -10,7 +10,7 @@ api_router = APIRouter(prefix="/me/groups/{group_uuid}/item_purchasing_histories
 
 @api_router.get("/", response_model=List[schemas.item_purchasing_histories.ItemPurchasingHistory])
 def get_item_purchasing_histories(group_uuid: str, member: models.User=Depends(get_current_user),database: Session=Depends(get_database)) -> List[schemas.item_purchasing_histories.ItemPurchasingHistory]:
-    _ = authorize_group(database, member, group_uuid)
+    _ = authorize_group(database, group_uuid, member)
     item_purchasing_history = cruds.item_purchasing_histories.read_item_purchasing_histories(database, member, group_uuid)
     if not item_purchasing_history:
         raise HTTPException(status.HTTP_204_NO_CONTENT)

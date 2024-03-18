@@ -9,6 +9,9 @@ from api.v1 import models, schemas
 def read_item_expiration_dates(database: Session, item_uuid: str) -> List[models.ItemExpirationDate]:
     return database.query(models.ItemExpirationDate).filter(models.ItemExpirationDate.item_uuid == item_uuid).all()
 
+def read_item_expiration_date_by_uuid(database: Session, item_expiration_uuid: str) -> Optional[models.ItemExpirationDate]:
+    return database.query(models.ItemExpirationDate).filter(models.ItemExpirationDate.uuid == item_expiration_uuid).first()
+
 def read_item_expiration_date(database: Session, item_uuid: str, item_expiration_date_uuid: str) -> Optional[models.ItemExpirationDate]:
     return database.query(models.ItemExpirationDate).filter(and_(models.ItemExpirationDate.item_uuid == item_uuid, models.ItemExpirationDate.uuid == item_expiration_date_uuid)).first()
 
@@ -22,5 +25,14 @@ def create_item_expiration_date(database: Session, item_uuid: str, new_item_expi
     database.add(item_expiration_date)
     database.commit()
     database.refresh(item_expiration_date)
+
+    return item_expiration_date
+
+def update_quantity(database: Session, request: schemas.item_expiration_dates.ItemExpirationDate, new_quantity: int) -> Optional[models.ItemExpirationDate]:
+    item_expiration_date = read_item_expiration_date_by_uuid(database,request.uuid)
+    if item_expiration_date:
+        item_expiration_date.quantity=new_quantity
+        database.commit()
+        database.refresh(item_expiration_date)
 
     return item_expiration_date

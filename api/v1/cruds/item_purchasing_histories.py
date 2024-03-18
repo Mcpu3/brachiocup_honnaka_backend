@@ -13,7 +13,8 @@ def create_item_purchasing_history(database: Session, member: models.User, group
     item_purchasing_history = models.ItemPurchasingHistory(
         user_uuid = member.uuid,
         group_uuid = group_uuid,
-        item_expiration_date_uuid = request.item_expiration_date_uuid
+        item_expiration_date_uuid = request.item_expiration_date_uuid,
+        quantity=request.quantity
     )
 
     database.add(item_purchasing_history)

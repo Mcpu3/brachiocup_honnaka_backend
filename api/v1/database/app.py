@@ -146,6 +146,7 @@ class ItemPurchasingHistory(database.Model):
     user_uuid = database.Column(database.String(48), database.ForeignKey("Users.uuid"), nullable=False)
     group_uuid = database.Column(database.String(48), database.ForeignKey("Groups.uuid"), nullable=False)
     item_expiration_date_uuid = database.Column(database.String(48), database.ForeignKey("ItemExpirationDates.uuid"), nullable=False)
+    quantity = database.Column(database.Integer, nullable=False)
     created_at = database.Column(database.DateTime, nullable=False, default=datetime.now)
     updated_at = database.Column(database.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
 
