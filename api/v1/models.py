@@ -38,6 +38,7 @@ class Group(Base):
     balances = relationship("Balance", back_populates="group")
     item_groups = relationship("ItemGroup", back_populates="group")
     items = relationship("Item", back_populates="group")
+    item_purchasing_histories = relationship("ItemPurchasingHistory", back_populates="group")
 
 
 class GroupMember(Base):
@@ -138,4 +139,5 @@ class ItemPurchasingHistory(Base):
     updated_at = Column(DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
 
     user = relationship("User", back_populates="item_purchasing_histories")
+    group = relationship("Group", back_populates="item_purchasing_histories")
     item_expiration_date = relationship("ItemExpirationDate", back_populates="item_purchasing_histories")

@@ -49,6 +49,7 @@ class Group(database.Model):
     balances = database.relationship("Balance", back_populates="group")
     item_groups = database.relationship("ItemGroup", back_populates="group")
     items = database.relationship("Item", back_populates="group")
+    item_purchasing_histories = database.relationship("ItemPurchasingHistory", back_populates="group")
 
 
 class GroupMember(database.Model):
@@ -149,4 +150,5 @@ class ItemPurchasingHistory(database.Model):
     updated_at = database.Column(database.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
 
     user = database.relationship("User", back_populates="item_purchasing_histories")
+    group = database.relationship("Group", back_populates="item_purchasing_histories")
     item_expiration_date = database.relationship("ItemExpirationDate", back_populates="item_purchasing_histories")
