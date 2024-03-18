@@ -38,6 +38,7 @@ def post_item_group(group_uuid: str, request: schemas.item_groups.NewItemGroup, 
     item_group = cruds.item_groups.create_item_group(database, group.uuid, request)
     if not item_group:
         raise HTTPException(status.HTTP_400_BAD_REQUEST)
+
     response = {
         "Location": urllib.parse.urljoin(_request.url._url, f"./{item_group.uuid}")
     }
