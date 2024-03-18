@@ -1,3 +1,4 @@
+from datetime import datetime
 from pydantic import BaseModel
 
 
@@ -7,6 +8,8 @@ class Group(BaseModel):
     display_name: str
     is_administrator: bool
     balance: int
+    created_at: datetime
+    updated_at: datetime
 
     class Config:
         from_attributes = True

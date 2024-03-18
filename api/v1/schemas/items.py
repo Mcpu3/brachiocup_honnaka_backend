@@ -1,3 +1,4 @@
+from datetime import datetime
 from pydantic import BaseModel
 from typing import List
 
@@ -13,6 +14,8 @@ class Item(BaseModel):
     selling_price: int
     item_expiration_dates: List[item_expiration_dates.ItemExpirationDate]
     item_thumbnail: item_thumbnails.ItemThumbnail
+    created_at: datetime
+    updated_at: datetime
 
     class Config:
         from_attributes = True
