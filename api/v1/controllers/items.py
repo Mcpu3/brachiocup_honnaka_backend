@@ -21,11 +21,11 @@ def get_items(group_uuid: str, current_user: models.User=Depends(get_current_use
 
     return items
 
-@api_router.get("/{item_uuid}", response_model=schemas.items.Item)
-def get_item(group_uuid: str, item_uuid: str, current_user: models.User=Depends(get_current_user), database: Session=Depends(get_database)):
+@api_router.get("/{item_uuid_or_barcode}", response_model=schemas.items.Item)
+def get_item(group_uuid: str, item_uuid_or_barcode: str, current_user: models.User=Depends(get_current_user), database: Session=Depends(get_database)):
     group = authorize_group(database, group_uuid, current_user)
 
-    item = cruds.items.read_item(database, item_uuid)
+    item = cruds.items.read_item(database, item_uuid_or_barcode)
     if not item:
         raise HTTPException(status.HTTP_404_NOT_FOUND)
 
