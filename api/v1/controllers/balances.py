@@ -14,8 +14,8 @@ def top_up_balance(group_uuid: str, request: schemas.balances.TopUpBalance, curr
     balance = cruds.balances.read_balance(database, current_user.uuid, group.uuid)
     if not balance:
         raise HTTPException(status.HTTP_400_BAD_REQUEST)
-    balance = cruds.balances.update_balance(database, current_user.uuid, group.uuid, balance.balance + request.top_up_balance)
+    balance = cruds.balances.update_balance(database, current_user.uuid, group.uuid, balance.balance + request.topped_up_balance)
     if not balance:
         raise HTTPException(status.HTTP_400_BAD_REQUEST)
 
-    return balance
+    return status.HTTP_201_CREATED
