@@ -16,7 +16,7 @@ def read_user(database: Session, user_uuid: Optional[str]=None, username: Option
     return user
 
 def read_user_by_uuid(database: Session, user_uuid: str) -> Optional[models.User]:
-    return database.query(models.User).filter(models.User.user_uuid ==user_uuid).first()
+    return database.query(models.User).filter(models.User.uuid ==user_uuid).first()
 
 def read_user_by_name(database: Session, username: str) -> Optional[models.User]:
     return database.query(models.User).filter(models.User.username ==username).first()

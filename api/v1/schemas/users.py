@@ -6,7 +6,7 @@ class Token(BaseModel):
 
 
 class User(BaseModel):
-    user_uuid: str
+    uuid: str
     username: str
     display_name: str
 
