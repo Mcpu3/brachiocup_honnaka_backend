@@ -37,6 +37,7 @@ class Group(Base):
     administrators = relationship("User", secondary="GroupAdministrators", back_populates="administrated_groups")
     balances = relationship("Balance", back_populates="group")
     item_groups = relationship("ItemGroup", back_populates="group")
+    items = relationship("Item", back_populates="group")
 
 
 class GroupMember(Base):
@@ -85,6 +86,7 @@ class Item(Base):
     __tablename__ = "Items"
 
     uuid = Column(String(48), primary_key=True, default=uuid.uuid4)
+    group_uuid = Column(String(48), ForeignKey("Groups.uuid"), nullable=False)
     item_group_uuid = Column(String(48), ForeignKey("ItemGroups.uuid"), nullable=False)
     name = Column(Unicode, nullable=False)
     barcode = Column(Unicode, nullable=False)
@@ -93,6 +95,7 @@ class Item(Base):
     created_at = Column(DateTime, nullable=False, default=datetime.now)
     updated_at = Column(DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
 
+    group = relationship("Group", back_populates="items")
     item_group = relationship("ItemGroup", back_populates="items")
     item_thumbnail = relationship("ItemThumbnail", back_populates="item")
     item_expiration_dates = relationship("ItemExpirationDate", back_populates="item")

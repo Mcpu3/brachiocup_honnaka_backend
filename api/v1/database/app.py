@@ -48,6 +48,7 @@ class Group(database.Model):
     administrators = database.relationship("User", secondary="GroupAdministrators", back_populates="administrated_groups")
     balances = database.relationship("Balance", back_populates="group")
     item_groups = database.relationship("ItemGroup", back_populates="group")
+    items = database.relationship("Item", back_populates="group")
 
 
 class GroupMember(database.Model):
@@ -96,6 +97,7 @@ class Item(database.Model):
     __tablename__ = "Items"
 
     uuid = database.Column(database.String(48), primary_key=True, default=uuid.uuid4)
+    group_uuid = database.Column(database.String(48), database.ForeignKey("Groups.uuid"), nullable=False)
     item_group_uuid = database.Column(database.String(48), database.ForeignKey("ItemGroups.uuid"), nullable=False)
     name = database.Column(database.Unicode, nullable=False)
     barcode = database.Column(database.Unicode, nullable=False)
@@ -104,6 +106,7 @@ class Item(database.Model):
     created_at = database.Column(database.DateTime, nullable=False, default=datetime.now)
     updated_at = database.Column(database.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
 
+    group = database.relationship("Group", back_populates="items")
     item_group = database.relationship("ItemGroup", back_populates="items")
     item_thumbnail = database.relationship("ItemThumbnail", back_populates="item")
     item_expiration_dates = database.relationship("ItemExpirationDate", back_populates="item")

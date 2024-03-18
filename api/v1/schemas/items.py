@@ -24,5 +24,5 @@ class NewItem(BaseModel):
     barcode: str
     cost_price: int
     selling_price: int
-    item_expiration_dates: List[item_expiration_dates.NewItemExpirationDate]
-    item_thumbnail: item_thumbnails.NewItemThumbnail
+    new_item_expiration_dates: List[item_expiration_dates.NewItemExpirationDate]
+    new_item_thumbnail: item_thumbnails.NewItemThumbnail
