@@ -95,7 +95,7 @@ def resize_item_thumbnail(_base64: str, width: int, height: int) -> str:
         image = image.resize((width, height))
         image.save(buffer, format="PNG")
 
-    return prefix + base64.b64encode(buffer.getvalue()).decode("utf-8")
+    return prefix + base64.b64encode(buffer.getvalue()).decode()
 
 @api_router.delete("/{item_uuid}")
 def delete_item(group_uuid: str, item_uuid: str, current_user: models.User=Depends(get_current_user), database: Session=Depends(get_database)):
