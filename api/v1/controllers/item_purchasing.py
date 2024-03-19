@@ -5,9 +5,9 @@ from api.v1 import cruds, models, schemas
 from api.v1.dependencies import get_database, get_current_user, authorize_group
 
 
-api_router = APIRouter(prefix="/me/groups/{group_uuid}/items/purchase", tags=["ItemPurchasing"])
+api_router = APIRouter(prefix="/me/groups/{group_uuid}/items", tags=["ItemPurchasing"])
 
-@api_router.post("/")
+@api_router.post("/purchase")
 def post_item_purchasing(group_uuid: str, request: schemas.item_purchasing.ItemPurchasing, current_user: models.User=Depends(get_current_user), database: Session=Depends(get_database)):
     group = authorize_group(database, group_uuid, current_user)
 
