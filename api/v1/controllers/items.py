@@ -36,7 +36,7 @@ def get_recommended_items(group_uuid: str, size: int=10, current_user: models.Us
         else:
             quantities_grouped_by_item[item_purchasing_history.item_expiration_date.item.uuid] += item_purchasing_history.quantity
 
-    sorted_quantities_grouped_by_item = sorted(quantities_grouped_by_item.items(), key=lambda quantity_grouped_by_item: quantity_grouped_by_item[1])
+    sorted_quantities_grouped_by_item = sorted(quantities_grouped_by_item.items(), key=lambda quantity_grouped_by_item: quantity_grouped_by_item[1], reverse=True)
 
     recommended_items = []
     for item_uuid, _ in sorted_quantities_grouped_by_item:
