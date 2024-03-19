@@ -28,10 +28,10 @@ class User(database.Model):
     created_at = database.Column(database.DateTime, nullable=False, default=datetime.now)
     updated_at = database.Column(database.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
 
-    groups = database.relationship("Group", secondary="GroupMembers", back_populates="members")
-    administrated_groups = database.relationship("Group", secondary="GroupAdministrators", back_populates="administrators")
-    balances = database.relationship("Balance", back_populates="user")
-    item_purchasing_histories = database.relationship("ItemPurchasingHistory", back_populates="user")
+    groups = database.relationship("Group", secondary="GroupMembers", back_populates="members", cascade="all, delete")
+    administrated_groups = database.relationship("Group", secondary="GroupAdministrators", back_populates="administrators", cascade="all, delete")
+    balances = database.relationship("Balance", back_populates="user", cascade="all, delete")
+    item_purchasing_histories = database.relationship("ItemPurchasingHistory", back_populates="user", cascade="all, delete")
 
 
 class Group(database.Model):
@@ -46,10 +46,10 @@ class Group(database.Model):
 
     members = database.relationship("User", secondary="GroupMembers", back_populates="groups")
     administrators = database.relationship("User", secondary="GroupAdministrators", back_populates="administrated_groups")
-    balances = database.relationship("Balance", back_populates="group")
-    item_groups = database.relationship("ItemGroup", back_populates="group")
-    items = database.relationship("Item", back_populates="group")
-    item_purchasing_histories = database.relationship("ItemPurchasingHistory", back_populates="group")
+    balances = database.relationship("Balance", back_populates="group", cascade="all, delete")
+    item_groups = database.relationship("ItemGroup", back_populates="group", cascade="all, delete")
+    items = database.relationship("Item", back_populates="group", cascade="all, delete")
+    item_purchasing_histories = database.relationship("ItemPurchasingHistory", back_populates="group", cascade="all, delete")
 
 
 class GroupMember(database.Model):
@@ -91,7 +91,7 @@ class ItemGroup(database.Model):
     updated_at = database.Column(database.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
 
     group = database.relationship("Group", back_populates="item_groups")
-    items = database.relationship("Item", back_populates="item_group")
+    items = database.relationship("Item", back_populates="item_group", cascade="all, delete")
 
 
 class Item(database.Model):
@@ -109,8 +109,8 @@ class Item(database.Model):
 
     group = database.relationship("Group", back_populates="items")
     item_group = database.relationship("ItemGroup", back_populates="items")
-    item_expiration_dates = database.relationship("ItemExpirationDate", back_populates="item")
-    item_thumbnail = database.relationship("ItemThumbnail", back_populates="item", uselist=False)
+    item_expiration_dates = database.relationship("ItemExpirationDate", back_populates="item", cascade="all, delete")
+    item_thumbnail = database.relationship("ItemThumbnail", back_populates="item", uselist=False, cascade="all, delete")
 
 
 class ItemExpirationDate(database.Model):
@@ -124,7 +124,7 @@ class ItemExpirationDate(database.Model):
     updated_at = database.Column(database.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
 
     item = database.relationship("Item", back_populates="item_expiration_dates")
-    item_purchasing_histories = database.relationship("ItemPurchasingHistory", back_populates="item_expiration_date")
+    item_purchasing_histories = database.relationship("ItemPurchasingHistory", back_populates="item_expiration_date", cascade="all, delete")
 
 
 class ItemThumbnail(database.Model):

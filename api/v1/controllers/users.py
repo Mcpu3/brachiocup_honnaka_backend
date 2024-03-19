@@ -14,7 +14,7 @@ api_router = APIRouter(tags=["Users"])
 
 @api_router.post("/signup")
 def signup(request: schemas.users.Signup, database: Session=Depends(get_database)):
-    user = cruds.users.read_user(database, username=request.usernane)
+    user = cruds.users.read_user(database, username=request.username)
     if user:
         raise HTTPException(status.HTTP_400_BAD_REQUEST)
 
@@ -42,3 +42,9 @@ def signin(request: OAuth2PasswordRequestForm=Depends(), database: Session=Depen
 @api_router.get("/me", response_model=schemas.users.User)
 def get_me(current_user: models.User=Depends(get_current_user)) -> schemas.users.User:
     return current_user
+
+@api_router.delete("/me")
+def delete_me(current_user: models.User=Depends(get_current_user), database: Session=Depends(get_database)):
+    cruds.users.delete_user(database, current_user.uuid)
+
+    return status.HTTP_200_OK

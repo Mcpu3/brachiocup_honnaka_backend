@@ -22,7 +22,7 @@ def get_item_groups(group_uuid: str, current_user: models.User=Depends(get_curre
     return item_groups
 
 @api_router.get("/{item_group_uuid}", response_model=schemas.item_groups.ItemGroup)
-def get_item_group(group_uuid: str, item_group_uuid: str, current_user: models.User=Depends(get_current_user),  database: Session=Depends(get_database)) -> schemas.item_groups.ItemGroup:
+def get_item_group(group_uuid: str, item_group_uuid: str, current_user: models.User=Depends(get_current_user), database: Session=Depends(get_database)) -> schemas.item_groups.ItemGroup:
     group = authorize_group(database, group_uuid, current_user)
 
     item_group = cruds.item_groups.read_item_group(database, item_group_uuid)
@@ -44,3 +44,15 @@ def post_item_group(group_uuid: str, request: schemas.item_groups.NewItemGroup, 
     }
 
     return JSONResponse(response, status.HTTP_201_CREATED)
+
+@api_router.delete("/{item_group_uuid}")
+def delete_item_group(group_uuid: str, item_group_uuid: str, current_user: models.User=Depends(get_current_user), database: Session=Depends(get_database)):
+    group = authorize_group(database, group_uuid, current_user)
+
+    item_group = cruds.item_groups.read_item_group(database, item_group_uuid)
+    if not item_group:
+        raise HTTPException(status.HTTP_404_NOT_FOUND)
+
+    cruds.item_groups.delete_item_group(database, item_group_uuid)
+
+    return status.HTTP_200_OK

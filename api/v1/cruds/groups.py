@@ -55,3 +55,8 @@ def update_group_administrators(database: Session, group_uuid: str, new_administ
         database.refresh(group)
 
     return group
+
+def delete_group(database: Session, group_uuid: str) -> None:
+    database.query(models.Group).filter(models.Group.uuid == group_uuid).delete()
+
+    database.commit()

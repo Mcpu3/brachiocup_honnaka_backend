@@ -32,3 +32,9 @@ def update_quantity(database: Session, item_expiration_date_uuid: str, new_quant
         database.refresh(item_expiration_date)
 
     return item_expiration_date
+
+def delete_item_expiration_date(database: Session, item_expiration_date_uuid: str) -> None:
+    item_expiration_date = database.query(models.ItemExpirationDate).filter(models.ItemExpirationDate.uuid == item_expiration_date_uuid).first()
+
+    database.delete(item_expiration_date)
+    database.commit()

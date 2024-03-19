@@ -24,6 +24,7 @@ def get_current_user(access_token: str=Depends(OAuth2PasswordBearer("/api/v1/sig
             raise HTTPException(status.HTTP_400_BAD_REQUEST)
     except JWTError:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED)
+
     user = cruds.users.read_user(database, username=username)
     if not user:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED)
@@ -34,8 +35,10 @@ def authorize_group(database: Session, group_uuid: str, user: models.User, only_
     group = cruds.groups.read_group(database, group_uuid)
     if not group:
         raise HTTPException(status.HTTP_404_NOT_FOUND)
+
     if user not in group.members:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED)
+
     if only_administrator:
         if user not in group.administrators:
             raise HTTPException(status.HTTP_401_UNAUTHORIZED)
