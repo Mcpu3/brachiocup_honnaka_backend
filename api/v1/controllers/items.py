@@ -1,6 +1,5 @@
 import base64
 import io
-import re
 from typing import List
 import urllib.parse
 
@@ -88,12 +87,13 @@ def post_item(group_uuid: str, request: schemas.items.NewItem, _request: Request
     return JSONResponse(response, status.HTTP_201_CREATED)
 
 def resize_item_thumbnail(_base64: str, width: int, height: int) -> str:
-    prefix = re.match(r"(?<=^data:image/png;base64,).*", _base64)
-    data = base64.b64decode(_base64)
+    prefix = r"data:image/png;base64,"
+    base64_without_prefix = _base64[len(prefix):]
+    data = base64.b64decode(base64_without_prefix)
     buffer = io.BytesIO()
-    with Image.open(io.Bytes.io(data)) as image:
+    with Image.open(io.BytesIO(data)) as image:
         image = image.resize((width, height))
-        image.save(buffer)
+        image.save(buffer, format="PNG")
 
     return prefix + base64.b64encode(buffer.getvalue()).decode("utf-8")
 
