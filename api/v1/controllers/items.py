@@ -1,6 +1,10 @@
+import base64
+import io
+import re
 from typing import List
 import urllib.parse
 
+from PIL import Image
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
@@ -60,7 +64,7 @@ def get_item(group_uuid: str, item_uuid_or_barcode: str, current_user: models.Us
     return item
 
 @api_router.post("/")
-def post_item_group(group_uuid: str, request: schemas.items.NewItem, _request: Request, current_user: models.User=Depends(get_current_user), database: Session=Depends(get_database)):
+def post_item(group_uuid: str, request: schemas.items.NewItem, _request: Request, current_user: models.User=Depends(get_current_user), database: Session=Depends(get_database)):
     group = authorize_group(database, group_uuid, current_user, True)
 
     item = cruds.items.create_item(database, group.uuid, request)
@@ -72,6 +76,7 @@ def post_item_group(group_uuid: str, request: schemas.items.NewItem, _request: R
         if not item_expiration_date:
             raise HTTPException(status.HTTP_400_BAD_REQUEST)
 
+    request.new_item_thumbnail.base64 = resize_item_thumbnail(request.new_item_thumbnail.base64, 64, 64)
     item_thumbnail = cruds.item_thumbnails.create_item_thumbnail(database, item.uuid, request.new_item_thumbnail)
     if not item_thumbnail:
         raise HTTPException(status.HTTP_400_BAD_REQUEST)
@@ -81,6 +86,16 @@ def post_item_group(group_uuid: str, request: schemas.items.NewItem, _request: R
     }
 
     return JSONResponse(response, status.HTTP_201_CREATED)
+
+def resize_item_thumbnail(_base64: str, width: int, height: int) -> str:
+    prefix = re.match(r"(?<=^data:image/png;base64,).*", _base64)
+    data = base64.b64decode(_base64)
+    buffer = io.BytesIO()
+    with Image.open(io.Bytes.io(data)) as image:
+        image = image.resize((width, height))
+        image.save(buffer)
+
+    return prefix + base64.b64encode(buffer.getvalue()).decode("utf-8")
 
 @api_router.delete("/{item_uuid}")
 def delete_item(group_uuid: str, item_uuid: str, current_user: models.User=Depends(get_current_user), database: Session=Depends(get_database)):
