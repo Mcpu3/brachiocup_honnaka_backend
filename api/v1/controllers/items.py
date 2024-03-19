@@ -60,7 +60,7 @@ def get_item(group_uuid: str, item_uuid_or_barcode: str, current_user: models.Us
     return item
 
 @api_router.post("/")
-def post_item_group(group_uuid: str, request: schemas.items.NewItem, _request: Request, current_user: models.User=Depends(get_current_user), database: Session=Depends(get_database)):
+def post_item(group_uuid: str, request: schemas.items.NewItem, _request: Request, current_user: models.User=Depends(get_current_user), database: Session=Depends(get_database)):
     group = authorize_group(database, group_uuid, current_user, True)
 
     item = cruds.items.create_item(database, group.uuid, request)
