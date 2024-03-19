@@ -17,10 +17,10 @@ class User(Base):
     created_at = Column(DateTime, nullable=False, default=datetime.now)
     updated_at = Column(DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
 
-    groups = relationship("Group", secondary="GroupMembers", back_populates="members")
-    administrated_groups = relationship("Group", secondary="GroupAdministrators", back_populates="administrators")
-    balances = relationship("Balance", back_populates="user")
-    item_purchasing_histories = relationship("ItemPurchasingHistory", back_populates="user")
+    groups = relationship("Group", secondary="GroupMembers", back_populates="members", cascade="all, delete")
+    administrated_groups = relationship("Group", secondary="GroupAdministrators", back_populates="administrators", cascade="all, delete")
+    balances = relationship("Balance", back_populates="user", cascade="all, delete")
+    item_purchasing_histories = relationship("ItemPurchasingHistory", back_populates="user", cascade="all, delete")
 
 
 class Group(Base):
@@ -35,10 +35,10 @@ class Group(Base):
 
     members = relationship("User", secondary="GroupMembers", back_populates="groups")
     administrators = relationship("User", secondary="GroupAdministrators", back_populates="administrated_groups")
-    balances = relationship("Balance", back_populates="group")
-    item_groups = relationship("ItemGroup", back_populates="group")
-    items = relationship("Item", back_populates="group")
-    item_purchasing_histories = relationship("ItemPurchasingHistory", back_populates="group")
+    balances = relationship("Balance", back_populates="group", cascade="all, delete")
+    item_groups = relationship("ItemGroup", back_populates="group", cascade="all, delete")
+    items = relationship("Item", back_populates="group", cascade="all, delete")
+    item_purchasing_histories = relationship("ItemPurchasingHistory", back_populates="group", cascade="all, delete")
 
 
 class GroupMember(Base):
@@ -80,7 +80,7 @@ class ItemGroup(Base):
     updated_at = Column(DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
 
     group = relationship("Group", back_populates="item_groups")
-    items = relationship("Item", back_populates="item_group")
+    items = relationship("Item", back_populates="item_group", cascade="all, delete")
 
 
 class Item(Base):
@@ -98,8 +98,8 @@ class Item(Base):
 
     group = relationship("Group", back_populates="items")
     item_group = relationship("ItemGroup", back_populates="items")
-    item_expiration_dates = relationship("ItemExpirationDate", back_populates="item")
-    item_thumbnail = relationship("ItemThumbnail", back_populates="item", uselist=False)
+    item_expiration_dates = relationship("ItemExpirationDate", back_populates="item", cascade="all, delete")
+    item_thumbnail = relationship("ItemThumbnail", back_populates="item", uselist=False, cascade="all, delete")
 
 
 class ItemExpirationDate(Base):
@@ -113,7 +113,7 @@ class ItemExpirationDate(Base):
     updated_at = Column(DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
 
     item = relationship("Item", back_populates="item_expiration_dates")
-    item_purchasing_histories = relationship("ItemPurchasingHistory", back_populates="item_expiration_date")
+    item_purchasing_histories = relationship("ItemPurchasingHistory", back_populates="item_expiration_date", cascade="all, delete")
 
 
 class ItemThumbnail(Base):

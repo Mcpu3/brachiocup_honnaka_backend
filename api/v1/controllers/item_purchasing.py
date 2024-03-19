@@ -14,6 +14,7 @@ def post_item_purchasing(group_uuid: str, request: schemas.item_purchasing.ItemP
     item_expiration_date = cruds.item_expiration_dates.read_item_expiration_date(database, request.item_expiration_date_uuid)
     if not item_expiration_date:
         raise HTTPException(status.HTTP_400_BAD_REQUEST)
+
     item_expiration_date = cruds.item_expiration_dates.update_quantity(database, item_expiration_date.uuid, item_expiration_date.quantity - request.quantity)
     if not item_expiration_date:
         raise HTTPException(status.HTTP_400_BAD_REQUEST)
@@ -21,6 +22,7 @@ def post_item_purchasing(group_uuid: str, request: schemas.item_purchasing.ItemP
     balance = cruds.balances.read_balance(database, current_user.uuid, group.uuid)
     if not balance:
         raise HTTPException(status.HTTP_400_BAD_REQUEST)
+
     balance = cruds.balances.update_balance(database, current_user.uuid, group.uuid, balance.balance - item_expiration_date.item.selling_price * request.quantity)
     if not balance:
         raise HTTPException(status.HTTP_400_BAD_REQUEST)

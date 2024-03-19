@@ -81,3 +81,15 @@ def post_item_group(group_uuid: str, request: schemas.items.NewItem, _request: R
     }
 
     return JSONResponse(response, status.HTTP_201_CREATED)
+
+@api_router.delete("/{item_uuid}")
+def delete_item(group_uuid: str, item_uuid: str, current_user: models.User=Depends(get_current_user), database: Session=Depends(get_database)):
+    group = authorize_group(database, group_uuid, current_user)
+
+    item = cruds.items.read_item(database, item_uuid)
+    if not item:
+        raise HTTPException(status.HTTP_404_NOT_FOUND)
+
+    cruds.items.delete_item(database, item_uuid)
+
+    return status.HTTP_200_OK
