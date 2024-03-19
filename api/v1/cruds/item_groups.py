@@ -23,3 +23,9 @@ def create_item_group(database: Session, group_uuid: str, new_item_group: schema
     database.refresh(item_group)
 
     return item_group
+
+def delete_item_group(database: Session, item_group_uuid: str) -> None:
+    item_group = database.query(models.ItemGroup).filter(models.ItemGroup.uuid == item_group_uuid).first()
+
+    database.delete(item_group)
+    database.commit()

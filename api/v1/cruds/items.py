@@ -27,3 +27,8 @@ def create_item(database: Session, group_uuid: str, new_item: schemas.items.NewI
     database.refresh(item)
 
     return item
+
+def delete_item(database: Session, item_uuid: str) -> None:
+    database.query(models.Item).filter(models.Item.uuid == item_uuid).delete()
+
+    database.commit()
