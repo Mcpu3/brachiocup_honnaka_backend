@@ -58,7 +58,9 @@ def get_item(group_uuid: str, item_uuid_or_barcode: str, current_user: models.Us
 
     item = cruds.items.read_item(database, item_uuid_or_barcode)
     if not item:
-        raise HTTPException(status.HTTP_404_NOT_FOUND)
+        item = cruds.items.read_item_by_barcode(database, group.uuid, item_uuid_or_barcode)
+        if not item:
+            raise HTTPException(status.HTTP_404_NOT_FOUND)
 
     return item
 
